@@ -96,6 +96,7 @@ app.delete("/files/:id", async (req, res) => {
     const { id } = req.params;
     const result = await db`SELECT * FROM files WHERE id = ${id};`;
 
+
     if (result.length === 0) {
       return res.status(404).json({ message: "File not found" });
     }
@@ -103,7 +104,7 @@ app.delete("/files/:id", async (req, res) => {
     const file = result[0];
     const filePath = path.join(process.cwd(), file.pathname.replace("/uploads/", "uploads/"));
 
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    fs.unlinkSync(filePath);
 
     await db`DELETE FROM files WHERE id = ${id};`;
 
