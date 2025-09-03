@@ -15,7 +15,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:3001",
+    origin: process.env.front_end,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type"],
   })
@@ -136,5 +136,9 @@ app.put("/files/:id", async (req, res) => {
 });
 
 app.use("/uploads", express.static(uploadDir));
+
+// app.listen(3000, () => {
+//   console.log("Server running on http://localhost:3000");
+// });
 
 export default app
