@@ -100,10 +100,12 @@ app.delete("/files/:id", async (req, res) => {
     if (result.length === 0) {
       return res.status(404).json({ message: "File not found" });
     }
-
+    console.log(result)
+  
     const file = result[0];
-    const filePath = path.join(process.cwd(), file.pathname.replace("/uploads/", "uploads/"));
-
+      console.log(__dirname)
+    const filePath = path.join(__dirname, file.pathname.replace("/uploads/", "uploads/"));
+      console.log(filePath,"ljjk")
     fs.unlinkSync(filePath);
 
     await db`DELETE FROM files WHERE id = ${id};`;
