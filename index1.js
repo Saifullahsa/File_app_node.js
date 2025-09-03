@@ -104,7 +104,7 @@ app.delete("/files/:id", async (req, res) => {
   
     const file = result[0];
       console.log(__dirname)
-    const filePath = path.join(__dirname, file.pathname.replace("/uploads/", "uploads/"));
+    const filePath = path.join(file.pathname.replace("/uploads/", "uploads/"));
       console.log(filePath,"ljjk")
     fs.unlinkSync(filePath);
 
