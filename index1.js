@@ -137,8 +137,8 @@ app.put("/files/:id", async (req, res) => {
 
 app.use("/uploads", express.static(uploadDir));
 
-// app.listen(3000, () => {
-//   console.log("Server running on http://localhost:3000");
-// });
+app.listen(3000, () => {
+  console.log("Server running on http://localhost:3000");
+});
 
 export default app
