@@ -95,45 +95,22 @@ app.get("/files/:id/download", async (req, res) => {
 app.delete("/files/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    const result = await db.query("SELECT * FROM files WHERE id = $1", [id]);
 
-    const result = await db`SELECT * FROM files WHERE id = ${id};`;
-     await db`DELETE FROM files WHERE id = ${id};`;
-    
-   const __filename = fileURLToPath(import.meta.url)
-    const file = result[0];
-    const filePath = path.join(path.dirname(__filename),file.pathname.replace("/uploads/", "uploads/"));
-      console.log(filePath,"ljjk")
-    fs.unlinkSync(filePath);
+    if (result.rows.length === 0) return res.status(404).json({ message: "File not found" });
+
+    const file = result.rows[0];
+    const filePath = path.join(__dirname, file.pathname.replace("/uploads/", "uploads/"));
+
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+
+    await db.query("DELETE FROM files WHERE id = $1", [id]);
+
     res.json({ message: "File deleted successfully" });
   } catch (err) {
-    console.warn(err)
-    res.json({ message: "File deleted successfully in db" });
-  } 
+    res.status(500).json({ message: "Failed to delete file", error: err });
+  }
 });
-// app.delete("/files/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const result = await db`SELECT * FROM files WHERE id = ${id};`;
-
-
-//     if (result.length === 0) {
-//       return res.status(404).json({ message: "File not found" });
-//     }
-//     console.log(result)
-//    const __filename = fileURLToPath(import.meta.url)
-//     const file = result[0];
-     
-//     const filePath = path.join(path.dirname(__filename),file.pathname.replace("/uploads/", "uploads/"));
-//       console.log(filePath,"ljjk")
-//     fs.unlinkSync(filePath);
-
-//     await db`DELETE FROM files WHERE id = ${id};`;
-
-//     res.json({ message: "File deleted successfully" });
-//   } catch (err) {
-//     res.status(500).json({ message: "Failed to delete file", error: err.message });
-//   }
-// });
 
 app.put("/files/:id", async (req, res) => {
   try {
@@ -159,8 +136,5 @@ app.put("/files/:id", async (req, res) => {
 
 app.use("/uploads", express.static(uploadDir));
 
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
-});
-
-export default app
+const PORT = process.env.PORT || 3001; 
+app.listen(PORT, () => console.log(` Server running on port ${PORT}`));
