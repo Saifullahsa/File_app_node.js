@@ -5,7 +5,6 @@ import fs from "fs";
 import cors from "cors";
 import dotenv from "dotenv";
 import { neon } from "@neondatabase/serverless";
-import { fileURLToPath } from "url";
 
 dotenv.config();
 
@@ -14,13 +13,8 @@ const db = neon(process.env.DATABASE_URL);
 const app = express();
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: process.env.front_end,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
-  })
-);
+app.use(cors());
+
 
 const uploadDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadDir)) {
