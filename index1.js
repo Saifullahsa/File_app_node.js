@@ -5,6 +5,7 @@ import fs from "fs";
 import cors from "cors";
 import dotenv from "dotenv";
 import { neon } from "@neondatabase/serverless";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
@@ -101,10 +102,10 @@ app.delete("/files/:id", async (req, res) => {
       return res.status(404).json({ message: "File not found" });
     }
     console.log(result)
-  
+   const __filename = fileURLToPath(import.meta.url)
     const file = result[0];
-      console.log(__dirname)
-    const filePath = path.join(__dirname,file.pathname.replace("/uploads/", "uploads/"));
+     
+    const filePath = path.join(path.dirname(__filename),file.pathname.replace("/uploads/", "uploads/"));
       console.log(filePath,"ljjk")
     fs.unlinkSync(filePath);
 
