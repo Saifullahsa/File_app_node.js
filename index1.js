@@ -89,23 +89,25 @@ app.get("/files/:id/download", async (req, res) => {
 app.delete("/files/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await db.query("SELECT * FROM files WHERE id = $1", [id]);
+    const result = await db`SELECT * FROM files WHERE id = ${id};`;
 
-    if (result.rows.length === 0) return res.status(404).json({ message: "File not found" });
 
-    const file = result.rows[0];
-    const filePath = path.join(__dirname, file.pathname.replace("/uploads/", "uploads/"));
+    if (result.length === 0) {
+      return res.status(404).json({ message: "File not found" });
+    }
 
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    const file = result[0];
+    const filePath = path.join(process.cwd(), file.pathname.replace("/uploads/", "uploads/"));
 
-    await db.query("DELETE FROM files WHERE id = $1", [id]);
+    fs.unlinkSync(filePath);
+
+    await db`DELETE FROM files WHERE id = ${id};`;
 
     res.json({ message: "File deleted successfully" });
   } catch (err) {
-    res.status(500).json({ message: "Failed to delete file", error: err });
+    res.status(500).json({ message: "Failed to delete file", error: err.message });
   }
 });
-
 app.put("/files/:id", async (req, res) => {
   try {
     const { id } = req.params;
