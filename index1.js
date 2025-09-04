@@ -16,7 +16,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: 'http://localhost:3001',
+    origin: process.env.front_end,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type"],
   })
@@ -135,7 +135,7 @@ app.put("/files/:id", async (req, res) => {
 
     res.json({ message: "File updated successfully", file: result[0] });
   } catch (err) {
-    res.status(500).json({ message: "Failed to update file", error: err.message });
+    console.log(err)
   }
 });
 
